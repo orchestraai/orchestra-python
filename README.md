@@ -35,26 +35,58 @@ print(prompts.data[0].id)
 print(prompts.data[0].template)
 print(prompts.data[0].input_variables)
 
-# Create a new prompt with one input variable
-one_input_prompt = orchestra.Prompts.create(input_variables=["name"], template="Your name is {name}. Tell me a joke using {name}.")
+# Create a new prompt and add to your account's prompts, with one input variable
+new_prompt = orchestra.Prompts.create(input_variables=["name"], template="Your name is {name}. Tell me a joke using {name}.")
 
 # Preview prompt with variable name
-one_input_prompt.format(name="Jason")
+new_prompt.format(name="Jason")
 # -> "Your name is Jason. Tell me a joke using Jason."
 
+# Edit an existing prompt
+updated_prompt = orchestra.Prompts.update(new_prompt.id, input_variables=["name", "age"], template="Your name is {name}. You are {age} years old, Tell me a joke using {name}, that a {age} year old would find funny.")
 
-orchestrate = orchestra.Orchestrate.from_prompt(one_input_prompt)
+# Create a tracking event named "Joke generated." on your account. Wraps the OpenAI API call 
+# and tracks every instance this prompt is triggered, along with the corresponding output, and associated metadata
 
-Wrap the OpenAI API call with the `orchestrate` object to track the prompt, generation, and associated metadata
-
-output = orchestrate(
-    openai.Completion.create,
+orchestration = orchestra.Ochestration.create("Joke generated.", 
+    action=openai.Completion.create,
+    prompt=updated_prompt, 
     engine="text-davinci-003",
     max_tokens=1024,
-    temperature=0.3,
+    temperature=0.3
+)
+
+# Run this Orchestration with the input variables
+output = orchestration.play(
     input={
-        "name": "Jason"
+        "name": "Jason",
+        "age": 24
     }
 )
+
+# output.choices[0].text
 # -> "Why did Jason throw his clock out the window? Because he wanted to see time fly!"
+
+# score generated output completion (-1.0 to -1.0)
+orchestra.Reward.score_output(output.id, -1)
+
+# Update the prompt
+iterated_prompt = orchestra.Prompts.update(updated_prompt.id, input_variables=["topic", "age"], template="Tell me a joke about {topic}, that a {age} year old would find funny.")
+
+# Update the orchestration with the new prompt
+orchestration.update_prompt(iterated_prompt)
+
+# Run this prompt with the new prompt 
+output = orchestration.play(
+    input={
+        "topic": "coffee",
+        "age": 24
+    }
+)
+
+# output.choices[0].text
+# -> "Why don't you ever tell secrets to coffee? Because it always spills the beans and keeps you up all night!"
+
+# score generated output completion (-1.0 to -1.0)
+orchestra.Reward.score_output(output.id, 1)
 ```
