@@ -1,0 +1,8 @@
+LICENSE.txt
+README.md
+setup.py
+src/orchestra_ai.egg-info/PKG-INFO
+src/orchestra_ai.egg-info/SOURCES.txt
+src/orchestra_ai.egg-info/dependency_links.txt
+src/orchestra_ai.egg-info/requires.txt
+src/orchestra_ai.egg-info/top_level.txt

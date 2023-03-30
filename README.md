@@ -1,10 +1,10 @@
-🎼 Orchestra
+# 🎼 Orchestra
 
 Docs
 
 Note: Orchestra is an alpha release, so expect sharp edges and bugs.
 
-🧩 What is Orchestra?
+## 🧩 What is Orchestra?
 
 Orchestra is a single, unified data platform that makes it easy to collect instrumentation and performance data from your LLMs, track and run models and experiments, and deploy your LLM models faster, with higher performance
 
@@ -12,11 +12,17 @@ We provide open-source infrastrure for LLM instrumentation and experimentation. 
 
 We also provide managed instances and a web dashboard for tracking and improving the performance of all your models and prompts, all in one place.
 
+## Quick Install
+pip install orchestra-ai
+
 Check out the Getting Started guide to learn how to use Orchestra.
 
 Call the Orchestra object with the LLM API call as the first argument and add any additional arguments to the LLM API call as the remaining arguments.
 
+## Getting started
+
 import openai
+import orchestra-ai
 
 # Wrap the OpenAI API call with the `orchestra` object to track the prompt, generation, and associated metadata
 output = orchestra(
