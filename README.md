@@ -20,14 +20,41 @@ Check out the Getting Started guide to learn how to use Orchestra.
 Call the Orchestra object with the LLM API call as the first argument and add any additional arguments to the LLM API call as the remaining arguments.
 
 ## Getting started
-
+```python
 import openai
-import orchestra-ai
+import orchestra
 
-# Wrap the OpenAI API call with the `orchestra` object to track the prompt, generation, and associated metadata
-output = orchestra(
+
+orchestra.api_key = "sk-..."
+
+# list prompts
+prompts = orchestra.Prompts.list()
+
+# print the first prompt
+print(prompts.data[0].id)
+print(prompts.data[0].template)
+print(prompts.data[0].input_variables)
+
+# Create a new prompt with one input variable
+one_input_prompt = orchestra.Prompts.create(input_variables=["name"], template="Your name is {name}. Tell me a joke using {name}.")
+
+# Preview prompt with variable name
+one_input_prompt.format(name="Jason")
+# -> "Your name is Jason. Tell me a joke using Jason."
+
+
+orchestrate = orchestra.Orchestrate.from_prompt(one_input_prompt)
+
+Wrap the OpenAI API call with the `orchestrate` object to track the prompt, generation, and associated metadata
+
+output = orchestrate(
     openai.Completion.create,
     engine="text-davinci-003",
     max_tokens=1024,
-    temperature=0.3
+    temperature=0.3,
+    input={
+        "name": "Jason"
+    }
 )
+# -> "Why did Jason throw his clock out the window? Because he wanted to see time fly!"
+```
